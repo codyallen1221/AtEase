@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AtEase</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <h1>Caffeine Tracker</h1>
+
+        <p>
+            This app helps me understand how much caffeine I drink over time.
+        </p>
+
+        <!-- Stats section -->
+        <div id="stats-section">
+            <div class="stat-card">
+                <h3>Daily Average (All Time)</h3>
+                <p id="daily-avg" class="stat-value">0 mg</p>
+            </div>
+            <div class="stat-card">
+                <h3>Weekly Average (Last 4 Weeks)</h3>
+                <p id="weekly-avg" class="stat-value">0 mg</p>
+            </div>
+            <div class="stat-card">
+                <h3>Monthly Average (Last 3 Months)</h3>
+                <p id="monthly-avg" class="stat-value">0 mg</p>
+            </div>
+        </div>
+
+        <!-- Form to add new caffeine entry-->
+         <form id="entry-form">
+            <input type="text" id="drink" placeholder="Drink Name" required>
+            <input type="number" id="mg" placeholder="Caffeine (mg)" required>
+            <button type="submit">Add</button>
+         </form>
+
+            <!-- List of entries -->
+         <ul id="entries-list"></ul>
+
+        <script src="app.js"></script>
+    </body>
+
+</html>

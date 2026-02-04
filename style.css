@@ -190,3 +190,269 @@ button:active {
 .entry-item:last-of-type {
   border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
+
+.no-entries {
+  background-color: white;
+  padding: var(--space-24);
+  border-radius: var(--border-radius);
+  color: var(--warm-slate);
+  font-size: 16px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Calendar Section */
+#calendar-section {
+  margin-top: var(--space-32);
+}
+
+.calendar-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-24);
+}
+
+.toggle-btn {
+  padding: var(--space-8) var(--space-16);
+  font-size: 14px;
+}
+
+/* Calendar Header */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-24);
+  background-color: white;
+  padding: var(--space-16) var(--space-24);
+  border-radius: var(--border-radius);
+}
+
+.calendar-header h3 {
+  font-size: 20px;
+  font-weight: var(--heading-weight);
+  color: var(--charcoal);
+  margin: 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.calendar-nav {
+  background-color: var(--soft-stone);
+  color: var(--charcoal);
+  padding: var(--space-8) var(--space-16);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.calendar-nav:hover {
+  background-color: #dde2d9;
+}
+
+/* Month View Calendar Grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-8);
+  background-color: white;
+  padding: var(--space-24);
+  border-radius: var(--border-radius);
+}
+
+.calendar-day-name {
+  text-align: center;
+  font-weight: var(--heading-weight);
+  font-size: 14px;
+  color: var(--warm-slate);
+  padding: var(--space-8);
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  color: var(--charcoal);
+  background-color: var(--soft-stone);
+  transition: all var(--transition);
+}
+
+.calendar-day.empty {
+  background-color: transparent;
+}
+
+.calendar-day.today {
+  background-color: var(--deep-olive);
+  color: white;
+  font-weight: var(--heading-weight);
+}
+
+.calendar-day.future {
+  background-color: var(--off-white);
+  color: var(--warm-slate);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.calendar-day.has-data {
+  background-color: #8fa999;
+  color: white;
+  cursor: pointer;
+  font-weight: var(--heading-weight);
+}
+
+.calendar-day.has-data:hover {
+  background-color: var(--deep-olive);
+  transform: scale(1.05);
+}
+
+/* Year View Grid */
+.year-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-24);
+}
+
+.mini-month {
+  background-color: white;
+  padding: var(--space-16);
+  border-radius: var(--border-radius);
+}
+
+.mini-month-name {
+  font-weight: var(--heading-weight);
+  font-size: 14px;
+  color: var(--charcoal);
+  margin-bottom: var(--space-8);
+  text-align: center;
+}
+
+.mini-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-4);
+}
+
+.mini-day-name {
+  text-align: center;
+  font-size: 10px;
+  color: var(--warm-slate);
+  padding: var(--space-4);
+  font-weight: var(--heading-weight);
+}
+
+.mini-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--charcoal);
+  background-color: var(--soft-stone);
+  transition: all var(--transition);
+}
+
+.mini-day.empty {
+  background-color: transparent;
+}
+
+.mini-day.today {
+  background-color: var(--deep-olive);
+  color: white;
+  font-weight: var(--heading-weight);
+}
+
+.mini-day.future {
+  background-color: var(--off-white);
+  color: var(--warm-slate);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mini-day.has-data {
+  background-color: #8fa999;
+  color: white;
+  cursor: pointer;
+  font-weight: var(--heading-weight);
+}
+
+.mini-day.has-data:hover {
+  background-color: var(--deep-olive);
+  transform: scale(1.1);
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(31, 41, 51, 0.7);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: var(--space-32);
+  border-radius: var(--border-radius);
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--space-16);
+  right: var(--space-24);
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--warm-slate);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.modal-close:hover {
+  color: var(--charcoal);
+}
+
+.modal-content h2 {
+  font-size: 20px;
+  font-weight: var(--heading-weight);
+  color: var(--charcoal);
+  margin: 0 0 var(--space-16) 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.modal-total {
+  font-size: 24px;
+  font-weight: var(--heading-weight);
+  color: var(--deep-olive);
+  margin-bottom: var(--space-24);
+}
+
+.modal-drinks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.modal-drinks-list li {
+  padding: var(--space-16);
+  background-color: var(--soft-stone);
+  border-radius: var(--border-radius);
+  color: var(--charcoal);
+  font-size: 16px;
+}

@@ -107,7 +107,7 @@ function renderStats() {
   document.getElementById("monthly-avg").textContent = `${monthlyAvg} mg`;
 }
 
-// Render all entries grouped by date
+// Render only today's entries
 function renderEntries() {
   const entriesList = document.getElementById("entries-list");
   const entries = getEntries();
@@ -115,38 +115,35 @@ function renderEntries() {
   // Clear existing list
   entriesList.innerHTML = "";
 
-  // Group entries by date
-  const entriesByDate = {};
-  entries.forEach(entry => {
-    if (!entriesByDate[entry.date]) {
-      entriesByDate[entry.date] = [];
-    }
-    entriesByDate[entry.date].push(entry);
-  });
+  // Get today's date
+  const today = new Date().toISOString().split("T")[0];
 
-  // Sort dates in descending order (newest first)
-  const sortedDates = Object.keys(entriesByDate).sort((a, b) => b.localeCompare(a));
+  // Filter entries for today only
+  const todayEntries = entries.filter(entry => entry.date === today);
 
-  // Render each date group
-  sortedDates.forEach(date => {
-    const dateEntries = entriesByDate[date];
+  if (todayEntries.length === 0) {
+    const noEntries = document.createElement("li");
+    noEntries.className = "no-entries";
+    noEntries.textContent = "No entries for today yet.";
+    entriesList.appendChild(noEntries);
+    return;
+  }
 
-    // Calculate daily total
-    const dailyTotal = dateEntries.reduce((sum, entry) => sum + entry.mg, 0);
+  // Calculate daily total
+  const dailyTotal = todayEntries.reduce((sum, entry) => sum + entry.mg, 0);
 
-    // Create date header with total
-    const dateHeader = document.createElement("li");
-    dateHeader.className = "date-group-header";
-    dateHeader.textContent = `${date} - Total: ${dailyTotal} mg`;
-    entriesList.appendChild(dateHeader);
+  // Create date header with total
+  const dateHeader = document.createElement("li");
+  dateHeader.className = "date-group-header";
+  dateHeader.textContent = `Today - Total: ${dailyTotal} mg`;
+  entriesList.appendChild(dateHeader);
 
-    // Add individual entries for this date
-    dateEntries.forEach(entry => {
-      const li = document.createElement("li");
-      li.className = "entry-item";
-      li.textContent = `  ${entry.drink}: ${entry.mg} mg`;
-      entriesList.appendChild(li);
-    });
+  // Add individual entries for today
+  todayEntries.forEach(entry => {
+    const li = document.createElement("li");
+    li.className = "entry-item";
+    li.textContent = `  ${entry.drink}: ${entry.mg} mg`;
+    entriesList.appendChild(li);
   });
 }
 

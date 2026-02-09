@@ -5,6 +5,10 @@
 
 A lightweight caffeine tracker that helps me log drinks and understand my daily caffeine habits over time.
 
+## Live Demo
+
+🚀 [View Live App](https://atease-tracker.netlify.app)
+
 ## Features
 
 ### Caffeine Logging
@@ -24,6 +28,17 @@ A lightweight caffeine tracker that helps me log drinks and understand my daily 
 #### Persistent local storage
 
 - All data is saved in the browser using localStorage, so entries remain after refreshing or closing the page.
+
+#### Daily statistics
+
+- View daily, weekly (last 4 weeks), and monthly (last 3 months) caffeine averages at a glance.
+
+#### Calendar view
+
+- Toggle between month and year views to see your caffeine history.
+- Click on past days to view detailed drink logs and daily totals.
+- Today's entries displayed prominently with real-time updates.
+- Future days are visually distinguished and non-interactive.
 
 #### Simple, distraction-free UI
 
@@ -45,13 +60,29 @@ A lightweight caffeine tracker that helps me log drinks and understand my daily 
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="80" />
 </p>
 
+### Completed Features
+
+- ✅ Daily caffeine totals
+- ✅ Weekly and monthly averages
+- ✅ Calendar-based view with month/year toggle
+- ✅ Historical data viewer with modal popups
+
 ### Roadmap/Planned Features
 
-- Daily caffeine totals
-- Weekly and monthly averages
 - Visual summaries (charts)
-- Calendar‑based view
 - Optional reminders or gentle nudges
+- Data export/import functionality
+
+### Deployment
+
+This app can be deployed for free on Netlify:
+
+1. Go to [netlify.com](https://netlify.com)
+2. Click "Try Netlify Drop"
+3. Drag the project folder onto the page
+4. Done! Your app is live
+
+You can also use other static hosting services like GitHub Pages, Vercel, or any web server that serves static files.
 
 ### Notes
 

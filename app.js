@@ -30,53 +30,6 @@ function calculateDailyAverage() {
   return Math.round(totalMg / numDays);
 }
 
-// Calculate weekly average (last 4 weeks - daily average)
-function calculateWeeklyAverage() {
-  const entries = getEntries();
-  if (entries.length === 0) return 0;
-
-  const today = new Date();
-  const fourWeeksAgo = new Date(today);
-  fourWeeksAgo.setDate(today.getDate() - 28);
-
-  // Filter entries from last 4 weeks
-  const recentEntries = entries.filter(entry => {
-    const entryDate = new Date(entry.date);
-    return entryDate >= fourWeeksAgo && entryDate <= today;
-  });
-
-  if (recentEntries.length === 0) return 0;
-
-  // Sum total mg in last 4 weeks
-  const totalMg = recentEntries.reduce((sum, entry) => sum + entry.mg, 0);
-
-  // Divide by 28 days
-  return Math.round(totalMg / 28);
-}
-
-// Calculate monthly average (last 3 months - daily average)
-function calculateMonthlyAverage() {
-  const entries = getEntries();
-  if (entries.length === 0) return 0;
-
-  const today = new Date();
-  const threeMonthsAgo = new Date(today);
-  threeMonthsAgo.setDate(today.getDate() - 90);
-
-  // Filter entries from last 3 months
-  const recentEntries = entries.filter(entry => {
-    const entryDate = new Date(entry.date);
-    return entryDate >= threeMonthsAgo && entryDate <= today;
-  });
-
-  if (recentEntries.length === 0) return 0;
-
-  // Sum total mg in last 3 months
-  const totalMg = recentEntries.reduce((sum, entry) => sum + entry.mg, 0);
-
-  // Divide by 90 days
-  return Math.round(totalMg / 90);
-}
 
 // Add a new entry
 function addEntry(drink, mg) {
@@ -99,12 +52,8 @@ function addEntry(drink, mg) {
 // Render stats section
 function renderStats() {
   const dailyAvg = calculateDailyAverage();
-  const weeklyAvg = calculateWeeklyAverage();
-  const monthlyAvg = calculateMonthlyAverage();
 
   document.getElementById("daily-avg").textContent = `${dailyAvg} mg`;
-  document.getElementById("weekly-avg").textContent = `${weeklyAvg} mg`;
-  document.getElementById("monthly-avg").textContent = `${monthlyAvg} mg`;
 }
 
 // Render only today's entries

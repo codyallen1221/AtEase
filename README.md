@@ -31,7 +31,7 @@ A lightweight caffeine tracker that helps me log drinks and understand my daily 
 
 #### Daily statistics
 
-- View daily, weekly (last 4 weeks), and monthly (last 3 months) caffeine averages at a glance.
+- View your daily caffeine average (all time) at a glance.
 
 #### Calendar view
 
@@ -62,8 +62,7 @@ A lightweight caffeine tracker that helps me log drinks and understand my daily 
 
 ### Completed Features
 
-- ✅ Daily caffeine totals
-- ✅ Weekly and monthly averages
+- ✅ Daily caffeine totals and averages
 - ✅ Calendar-based view with month/year toggle
 - ✅ Historical data viewer with modal popups
 

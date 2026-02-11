@@ -479,6 +479,17 @@ button:active {
     min-width: 100%;
   }
 
+  /* Form adjustments for mobile */
+  #entry-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #entry-form button {
+    width: 100%;
+    margin-top: var(--space-8);
+  }
+
   /* Calendar adjustments for mobile */
   .calendar-grid {
     gap: var(--space-4);

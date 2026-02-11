@@ -1,4 +1,5 @@
 const STORAGE_KEY = "caffeine_entries";
+const GOAL_KEY = "caffeine_daily_goal";
 
 function getEntries() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -7,6 +8,15 @@ function getEntries() {
 
 function saveEntries(entries) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function getDailyGoal() {
+  const goal = localStorage.getItem(GOAL_KEY);
+  return goal ? parseInt(goal) : null;
+}
+
+function setDailyGoal(goal) {
+  localStorage.setItem(GOAL_KEY, goal.toString());
 }
 
 // Calculate daily average (all time)
@@ -52,8 +62,16 @@ function addEntry(drink, mg) {
 // Render stats section
 function renderStats() {
   const dailyAvg = calculateDailyAverage();
+  const goal = getDailyGoal();
 
   document.getElementById("daily-avg").textContent = `${dailyAvg} mg`;
+
+  const goalElement = document.getElementById("daily-goal");
+  if (goal) {
+    goalElement.textContent = `${goal} mg`;
+  } else {
+    goalElement.textContent = "Set your daily average goal.";
+  }
 }
 
 // Render only today's entries
@@ -109,6 +127,27 @@ form.addEventListener("submit", function(e) {
   // Clear inputs
   drinkInput.value = "";
   mgInput.value = "";
+});
+
+// Handle goal setting/editing
+const goalSettingsIcon = document.getElementById("goal-settings");
+goalSettingsIcon.addEventListener("click", function() {
+  const currentGoal = getDailyGoal();
+  const message = currentGoal
+    ? `Current goal: ${currentGoal} mg\n\nEnter your new daily average goal (mg):`
+    : "Enter your daily average goal (mg):";
+
+  const newGoal = prompt(message, currentGoal || "");
+
+  if (newGoal !== null && newGoal.trim() !== "") {
+    const goalValue = parseInt(newGoal);
+    if (!isNaN(goalValue) && goalValue > 0) {
+      setDailyGoal(goalValue);
+      renderStats();
+    } else {
+      alert("Please enter a valid number greater than 0.");
+    }
+  }
 });
 
 // Initial render

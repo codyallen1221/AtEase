@@ -575,6 +575,34 @@ button:active {
   border-radius: var(--border-radius);
   color: var(--charcoal);
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+}
+
+.modal-drink-label {
+  flex: 1;
+}
+
+.modal-delete-btn {
+  background: none;
+  border: none;
+  color: var(--warm-slate);
+  font-size: 22px;
+  line-height: 1;
+  padding: 0 var(--space-8);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.modal-delete-btn:hover {
+  color: var(--charcoal);
+}
+
+.modal-delete-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* Mobile Responsive Styles */

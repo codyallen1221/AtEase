@@ -88,6 +88,26 @@ async function addEntry(drink, mg) {
   if (typeof renderCalendar === "function") renderCalendar();
 }
 
+async function deleteEntry(entryId) {
+  if (!currentUser) return false;
+
+  const { error } = await supabaseClient
+    .from("entries")
+    .delete()
+    .eq("id", entryId);
+
+  if (error) {
+    showAppError("Could not delete entry: " + error.message);
+    return false;
+  }
+
+  entriesCache = entriesCache.filter(entry => entry.id !== entryId);
+  renderEntries();
+  renderStats();
+  if (typeof renderCalendar === "function") renderCalendar();
+  return true;
+}
+
 async function setDailyGoal(goal) {
   if (!currentUser) return;
 

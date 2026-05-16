@@ -34,34 +34,57 @@ function createModal() {
 }
 
 function openModal(date) {
-  const modal = document.getElementById('day-modal');
-  const entries = getEntries();
-
-  // Filter entries for the selected date
-  const dayEntries = entries.filter(entry => entry.date === date);
+  const dayEntries = getEntries().filter(entry => entry.date === date);
 
   if (dayEntries.length === 0) {
     return; // Don't open modal if no entries
   }
 
-  // Calculate total caffeine for the day
+  renderModalContents(date);
+  document.getElementById('day-modal').style.display = 'flex';
+}
+
+function renderModalContents(date) {
+  const dayEntries = getEntries().filter(entry => entry.date === date);
+
+  if (dayEntries.length === 0) {
+    closeModal();
+    return;
+  }
+
   const totalCaffeine = dayEntries.reduce((sum, entry) => sum + entry.mg, 0);
 
-  // Update modal content
   document.getElementById('modal-date').textContent = formatDate(date);
   document.getElementById('modal-total').textContent = `Total: ${totalCaffeine} mg`;
 
-  // Populate drinks list
   const drinksList = document.getElementById('modal-drinks-list');
   drinksList.innerHTML = '';
   dayEntries.forEach(entry => {
     const li = document.createElement('li');
-    li.textContent = `${entry.drink}: ${entry.mg} mg`;
+
+    const label = document.createElement('span');
+    label.className = 'modal-drink-label';
+    label.textContent = `${entry.drink}: ${entry.mg} mg`;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'modal-delete-btn';
+    deleteBtn.setAttribute('aria-label', `Delete ${entry.drink}`);
+    deleteBtn.textContent = '×';
+    deleteBtn.addEventListener('click', async () => {
+      if (!confirm(`Delete "${entry.drink}: ${entry.mg} mg"?`)) return;
+      deleteBtn.disabled = true;
+      const ok = await deleteEntry(entry.id);
+      if (ok) {
+        renderModalContents(date);
+      } else {
+        deleteBtn.disabled = false;
+      }
+    });
+
+    li.appendChild(label);
+    li.appendChild(deleteBtn);
     drinksList.appendChild(li);
   });
-
-  // Show modal
-  modal.style.display = 'flex';
 }
 
 function closeModal() {

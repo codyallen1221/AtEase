@@ -1,65 +1,109 @@
-const STORAGE_KEY = "caffeine_entries";
-const GOAL_KEY = "caffeine_daily_goal";
+let entriesCache = [];
+let dailyGoalCache = null;
 
 function getEntries() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  return raw ? JSON.parse(raw) : [];
-}
-
-function saveEntries(entries) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  return entriesCache;
 }
 
 function getDailyGoal() {
-  const goal = localStorage.getItem(GOAL_KEY);
-  return goal ? parseInt(goal) : null;
+  return dailyGoalCache;
 }
 
-function setDailyGoal(goal) {
-  localStorage.setItem(GOAL_KEY, goal.toString());
+async function loadUserData() {
+  try {
+    const { data: entries, error: entriesError } = await supabaseClient
+      .from("entries")
+      .select("id, date, drink, mg")
+      .order("created_at", { ascending: true });
+
+    if (entriesError) throw entriesError;
+    entriesCache = entries || [];
+
+    const { data: profile, error: profileError } = await supabaseClient
+      .from("profiles")
+      .select("daily_goal")
+      .maybeSingle();
+
+    if (profileError) throw profileError;
+    dailyGoalCache = profile?.daily_goal ?? null;
+
+    renderEntries();
+    renderStats();
+    if (typeof renderCalendar === "function") renderCalendar();
+  } catch (err) {
+    showAppError("Could not load your data: " + err.message);
+  }
 }
 
-// Calculate daily average (all time)
+function clearUserData() {
+  entriesCache = [];
+  dailyGoalCache = null;
+  const list = document.getElementById("entries-list");
+  if (list) list.innerHTML = "";
+}
+
+function showAppError(message) {
+  const el = document.getElementById("app-error");
+  el.textContent = message;
+  el.hidden = false;
+  setTimeout(() => { el.hidden = true; }, 5000);
+}
+
 function calculateDailyAverage() {
-  const entries = getEntries();
-  if (entries.length === 0) return 0;
+  if (entriesCache.length === 0) return 0;
 
-  // Group by date and sum mg per day
   const dailyTotals = {};
-  entries.forEach(entry => {
+  entriesCache.forEach(entry => {
     if (!dailyTotals[entry.date]) {
       dailyTotals[entry.date] = 0;
     }
     dailyTotals[entry.date] += entry.mg;
   });
 
-  // Calculate average
   const totalMg = Object.values(dailyTotals).reduce((sum, mg) => sum + mg, 0);
   const numDays = Object.keys(dailyTotals).length;
 
   return Math.round(totalMg / numDays);
 }
 
+async function addEntry(drink, mg) {
+  if (!currentUser) return;
 
-// Add a new entry
-function addEntry(drink, mg) {
-  const entries = getEntries();
+  const date = new Date().toISOString().split("T")[0];
 
-  const newEntry = {
-    id: Date.now(),
-    date: new Date().toISOString().split("T")[0],
-    drink,
-    mg
-  };
+  const { data, error } = await supabaseClient
+    .from("entries")
+    .insert({ user_id: currentUser.id, date, drink, mg })
+    .select("id, date, drink, mg")
+    .single();
 
-  entries.push(newEntry);
-  saveEntries(entries);
+  if (error) {
+    showAppError("Could not save entry: " + error.message);
+    return;
+  }
 
-  renderEntries(); // update the screen
-  renderStats(); // update stats
+  entriesCache.push(data);
+  renderEntries();
+  renderStats();
+  if (typeof renderCalendar === "function") renderCalendar();
 }
 
-// Render stats section
+async function setDailyGoal(goal) {
+  if (!currentUser) return;
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .upsert({ user_id: currentUser.id, daily_goal: goal, updated_at: new Date().toISOString() });
+
+  if (error) {
+    showAppError("Could not save goal: " + error.message);
+    return;
+  }
+
+  dailyGoalCache = goal;
+  renderStats();
+}
+
 function renderStats() {
   const dailyAvg = calculateDailyAverage();
   const goal = getDailyGoal();
@@ -74,19 +118,12 @@ function renderStats() {
   }
 }
 
-// Render only today's entries
 function renderEntries() {
   const entriesList = document.getElementById("entries-list");
-  const entries = getEntries();
-
-  // Clear existing list
   entriesList.innerHTML = "";
 
-  // Get today's date
   const today = new Date().toISOString().split("T")[0];
-
-  // Filter entries for today only
-  const todayEntries = entries.filter(entry => entry.date === today);
+  const todayEntries = entriesCache.filter(entry => entry.date === today);
 
   if (todayEntries.length === 0) {
     const noEntries = document.createElement("li");
@@ -96,16 +133,13 @@ function renderEntries() {
     return;
   }
 
-  // Calculate daily total
   const dailyTotal = todayEntries.reduce((sum, entry) => sum + entry.mg, 0);
 
-  // Create date header with total
   const dateHeader = document.createElement("li");
   dateHeader.className = "date-group-header";
   dateHeader.textContent = `Today - Total: ${dailyTotal} mg`;
   entriesList.appendChild(dateHeader);
 
-  // Add individual entries for today
   todayEntries.forEach(entry => {
     const li = document.createElement("li");
     li.className = "entry-item";
@@ -114,42 +148,36 @@ function renderEntries() {
   });
 }
 
-// Handle form submission
-const form = document.getElementById("entry-form");
-form.addEventListener("submit", function(e) {
-  e.preventDefault(); // prevent page reload
+document.addEventListener("DOMContentLoaded", function() {
+  const form = document.getElementById("entry-form");
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-  const drinkInput = document.getElementById("drink");
-  const mgInput = document.getElementById("mg");
+    const drinkInput = document.getElementById("drink");
+    const mgInput = document.getElementById("mg");
 
-  addEntry(drinkInput.value, Number(mgInput.value));
+    await addEntry(drinkInput.value, Number(mgInput.value));
 
-  // Clear inputs
-  drinkInput.value = "";
-  mgInput.value = "";
-});
+    drinkInput.value = "";
+    mgInput.value = "";
+  });
 
-// Handle goal setting/editing
-const goalSettingsIcon = document.getElementById("goal-settings");
-goalSettingsIcon.addEventListener("click", function() {
-  const currentGoal = getDailyGoal();
-  const message = currentGoal
-    ? `Current goal: ${currentGoal} mg\n\nEnter your new daily average goal (mg):`
-    : "Enter your daily average goal (mg):";
+  const goalSettingsIcon = document.getElementById("goal-settings");
+  goalSettingsIcon.addEventListener("click", async function() {
+    const currentGoal = getDailyGoal();
+    const message = currentGoal
+      ? `Current goal: ${currentGoal} mg\n\nEnter your new daily average goal (mg):`
+      : "Enter your daily average goal (mg):";
 
-  const newGoal = prompt(message, currentGoal || "");
+    const newGoal = prompt(message, currentGoal || "");
 
-  if (newGoal !== null && newGoal.trim() !== "") {
-    const goalValue = parseInt(newGoal);
-    if (!isNaN(goalValue) && goalValue > 0) {
-      setDailyGoal(goalValue);
-      renderStats();
-    } else {
-      alert("Please enter a valid number greater than 0.");
+    if (newGoal !== null && newGoal.trim() !== "") {
+      const goalValue = parseInt(newGoal);
+      if (!isNaN(goalValue) && goalValue > 0) {
+        await setDailyGoal(goalValue);
+      } else {
+        alert("Please enter a valid number greater than 0.");
+      }
     }
-  }
+  });
 });
-
-// Initial render
-renderEntries();
-renderStats();

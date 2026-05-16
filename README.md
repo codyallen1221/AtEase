@@ -1,6 +1,6 @@
 # caffeine-tracker
 
-**Version:** 1.0.0
+**Version:** 1.2.2
 **Author:** Cody Allen
 
 A lightweight caffeine tracker that helps me log drinks and understand my daily caffeine habits over time.
